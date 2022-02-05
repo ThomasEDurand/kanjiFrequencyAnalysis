@@ -9,6 +9,9 @@ How to use:
 2. Select how many words from the text you want saved and the name of the text. Selecting 50 will generate a list of the 50 most important Kanji words in the text along with definitions of them.
 3. An HTML file will be generated and opened in Chrome if it is installed on your computer and saved to your desktop (Many HTML to PDF converters exist online)
 
+Note
+Japanese while being studied a decent amount in the west does not have as many resources as other Indo-European languages do. As such the frequency list from Wiktionary only compiles the frequency of about 20000 words. These words make up around 97.5% of all words spoken in Japanese (see Zipf's Law.) Words not in this first 20000 are still searched and added to the file but the calculation of the pertinence is a bit arbitrary. 
+
 Discloser
 The project uses jisho.org for the definition of the terms I AM NOT AFFILIATED WITH THIS ORGANIZATION  
 Frequency lists from https://en.wiktionary.org/wiki/Wiktionary:Frequency_lists/Japanese10001-20000
