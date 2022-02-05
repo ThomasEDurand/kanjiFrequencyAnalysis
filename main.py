@@ -11,7 +11,7 @@ parsed = kakasi.convert(clpbrd)
 
 # TODO
 # Condense definitions
-# Add delta value to calculations
+# Add delta value to calculations?
 
 kanjiWords = []
 
@@ -79,20 +79,29 @@ with Session() as s:
         currentWord = kanjiWords[i][0]
         currentKana = kanjiWords[i][1]
         URL = "https://jisho.org/search/" + currentWord
-        print(URL)
-        f.write('<p><b>' + str(i+1) + ". " + currentWord + ": " + currentKana + '</b></p>' + "\n")
+        print(str(i+1) + "/" + str(numWords) + " words searched")
+        f.write('<p><b>' + str(i+1) + ". " + currentWord + ": " + currentKana + '</b>' + "<br>")
         try:
             req = s.get(URL)
             soup = BeautifulSoup(req.content, 'html.parser')
             # Using find instead of findall because I only want the first result now
             entry = soup.find(class_='meanings-wrapper')
+            k = 0
             for e in entry:
-                f.write('<p>' + e.text + '</p>')
+                if "Wikipedia definition" in e.text:
+                    break
+                else:
+                    if k % 2 == 0:
+                        f.write('' + e.text + ': ')
+                        k += 1
+                    else:
+                        f.write(e.text + '<br>')
+                        k += 1
 
         except:
             print("Error searching word " + currentWord)
 
-        f.write("\n")
+        f.write('<p>')
 
     f.close()
 s.close()
