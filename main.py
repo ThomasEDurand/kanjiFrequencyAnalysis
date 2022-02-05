@@ -10,8 +10,8 @@ clpbrd = pyperclip.paste()
 parsed = kakasi.convert(clpbrd)
 
 # TODO
-# Find better Frequency List
 # Condense definitions
+# Add delta value to calculations
 
 kanjiWords = []
 
@@ -35,9 +35,14 @@ for p in parsed:
 print(kanjiWords)
 
 for i in range(0, len(kanjiWords)):
+    wordFound = False
     for j in range(0, len(wordFreq)):
         if kanjiWords[i][0] == wordFreq[j]:
             kanjiWords[i] = (kanjiWords[i][0], kanjiWords[i][1], kanjiWords[i][2] * (j + 1))
+            wordFound = True
+    if not wordFound:
+        kanjiWords[i] = (kanjiWords[i][0], kanjiWords[i][1], kanjiWords[i][2] * 21000)
+
 
 kanjiWords.sort(key=lambda y: y[2], reverse=True)
 print(kanjiWords)
