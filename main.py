@@ -74,6 +74,7 @@ def obscuritySort(kanjiWords):
         if not wordFound:
             kanjiWords[i][2] *= 21000
 
+    kanjiWords.sort(key=lambda y: y[2], reverse=True)
 
 
 def main():
