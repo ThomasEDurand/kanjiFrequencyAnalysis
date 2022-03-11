@@ -85,6 +85,7 @@ def main():
     kakasi = pykakasi.kakasi()
     parsed = kakasi.convert(pyperclip.paste())
 
+
     try:
         if int(input("0 to use text from clipboard, 1 to chose local file: ")):
             root = tk.Tk()
