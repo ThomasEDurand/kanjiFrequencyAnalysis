@@ -54,6 +54,7 @@ def assemblePage(kanjiWords, numWords):
 
             except:
                 print("Error searching word " + currentWord)
+                #f.write(currentWord)
 
             f.write('<p>')
 
