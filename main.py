@@ -7,6 +7,7 @@ import pykakasi
 import pyperclip
 import webbrowser
 import tkinter as tk
+import concurrent.futures
 
 from bs4 import BeautifulSoup
 from requests import Session
@@ -24,22 +25,40 @@ def assemblePage(kanjiWords, numWords):
     d = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
     path = os.path.join(d, t)
 
+    entries = []
     with Session() as s:
-        f = open(path, "w+", encoding='utf-8')
-        for i, key in enumerate(kanjiWords):
-            if i >= numWords:
-                break
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            for i, key in enumerate(kanjiWords):
+                if i >= numWords:
+                    break
 
-            (currentWord, currentKana) = key
-            URL = "https://jisho.org/search/" + currentWord
-            print(str(i + 1) + "/" + str(numWords) + " words searched")
+                (currentWord, currentKana) = key
+                URL = "https://jisho.org/search/" + currentWord
+                print(str(i + 1) + "/" + str(numWords) + " words searched")
+                try:
+                    def lookupThread(_URL, _currentWord, _currentKana):
+                        req = s.get(_URL)
+                        soup = BeautifulSoup(req.content, 'html.parser')
+
+                        # Using find instead of findall because I only want the first result now
+                        ent = soup.find(class_='meanings-wrapper')
+                        entries.append((ent, _currentWord, _currentKana))
+                        print(entries)
+
+                    executor.submit(lookupThread, URL, currentWord, currentKana)
+
+
+                except:
+                    print("Error searching word " + currentWord)
+
+        executor.shutdown(wait=True)
+
+        f = open(path, "w+", encoding='utf-8')
+        for i, key in enumerate(entries):
+            (entry, currentWord, currentKana) = key
+            k = 0
             f.write('<p><b>' + str(i + 1) + ". " + currentWord + ": " + currentKana + '</b>' + "<br>")
-            try:
-                req = s.get(URL)
-                soup = BeautifulSoup(req.content, 'html.parser')
-                # Using find instead of findall because I only want the first result now
-                entry = soup.find(class_='meanings-wrapper')
-                k = 0
+            if entry is not None:
                 for e in entry:
                     if "Wikipedia definition" in e.text:
                         break
@@ -52,11 +71,9 @@ def assemblePage(kanjiWords, numWords):
                             f.write(e.text + '<br>')
                             k += 1
 
-            except:
-                print("Error searching word " + currentWord)
-                #f.write(currentWord)
+                    f.write('<p>')
 
-            f.write('<p>')
+
 
         f.close()
     s.close()
@@ -85,7 +102,6 @@ def obscuritySort(kanjiDict):
 def main():
     kakasi = pykakasi.kakasi()
     parsed = kakasi.convert(pyperclip.paste())
-
 
     try:
         if int(input("0 to use text from clipboard, 1 to chose local file: ")):
