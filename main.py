@@ -80,6 +80,7 @@ def assemblePage(kanjiWords, numWords):
     webbrowser.get(chrome_path).open(path)
 
 
+
 def obscuritySort(kanjiDict):
     with open("Frequency.txt", "r", encoding='utf-8') as f:
         wordFreq = f.read().splitlines()
